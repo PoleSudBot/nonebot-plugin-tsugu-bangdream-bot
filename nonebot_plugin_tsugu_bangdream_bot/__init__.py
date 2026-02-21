@@ -73,52 +73,51 @@ if TYPE_CHECKING:
 _config = get_plugin_config(Config)
 _command_start = get_driver().config.command_start
 
+
 __plugin_meta__ = PluginMetadata(
     name="BangDream",
-    description="nonebot-tsugu-bangdream-bot，🌸 BanG Dream! 少女乐团派对！相关信息查询与玩家管理插件",
+    description="🌸 BanG Dream! 少女乐团派对！相关信息查询与玩家管理插件",
     usage="""
-🎨 卡牌查询
-• b查卡 [关键词/ID]
-  └─ 搜索卡牌信息
+## 🎨 卡牌查询
+
+- **b查卡 [关键词/ID]** - 搜索卡牌信息
   示例：`b查卡 友希那`
-• b查卡面/bcard [卡牌ID]
-  └─ 获取高清卡面插画
+- **b查卡面 / bcard [卡牌ID]** - 获取高清卡面插画
   示例：`b查卡面 1399`
 
+## 🎵 歌曲与谱面
 
-🎵 歌曲与谱面
-• b查曲/bsong [关键词]
-  └─ 搜索歌曲详情/ID
+- **b查曲 / bsong [关键词]** - 搜索歌曲详情/ID
   示例：`b查曲 仅仅是现存`
-• b查谱面 [歌曲ID] [难度]
-  └─ 预览谱面 (难度可选，默认expert)
-  示例：`b查谱面 1 cn` | `b查谱面 1 hard`
+- **b查谱面 [歌曲ID] [难度]** - 预览谱面 (难度可选，默认expert)
+  示例：`b查谱面 1 cn`
+  示例：`b查谱面 1 hard`
 
+## 📊 活动与预测线 (YCX)
 
-📊 活动与预测线 (YCX)
-• b查活动/bevent [关键词/ID]
-  └─ 查询活动详情
-• bycx [排名] [活动ID]
-  └─ 查询指定档位预测线
+- **b查活动 / bevent [关键词/ID]** - 查询活动详情
+- **bycx [排名] [活动ID]** - 查询指定档位预测线
   示例：`bycx 1000`
-• bycxall / bmyycx
-  └─ 查询所有档位预测线
+- **bycxall** / **bmyycx** - 查询所有档位预测线
 
-🎮 玩家管理
-• b玩家状态
-  └─ 生成个人信息卡片
-• b绑定玩家
-  └─ 开启账号绑定流程
-  (需修改签名验证)
+## 🎮 玩家管理
 
-> 发送 `bh` 获取完整指令列表
-""",
+- **b玩家状态** - 生成个人信息卡片
+- **b绑定玩家** - 开启账号绑定流程 (需修改签名验证)
+
+> 💡 提示：发送 `bh` 获取完整指令列表
+""".strip(),
     type="application",
     homepage="https://github.com/WindowsSov8forUs/nonebot-plugin-tsugu-bangdream-bot",
     config=Config,
     supported_adapters=inherit_supported_adapters(
         "nonebot_plugin_alconna", "nonebot_plugin_userinfo"
     ),
+    extra={
+        "author": "WindowsSov8forUs",
+        "version": "unknown",
+        "menu_type": "游戏相关",
+    },
 )
 
 try:
