@@ -97,6 +97,9 @@ class Config(BaseModel):
     tsugu_unbind_player_aliases: Set[str] = set()
     tsugu_main_server_aliases: Set[str] = set()
     tsugu_default_servers_aliases: Set[str] = set()
+    
+    tsugu_command_prefixes: list[str] = []
+    
     tsugu_player_status_aliases: Set[str] = set()
     tsugu_player_list_aliases: Set[str] = set()
     tsugu_switch_index_aliases: Set[str] = set()

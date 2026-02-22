@@ -272,6 +272,41 @@ async def _process_if_unmatch(matcher: AlconnaMatcher, arp: Arparma) -> None:
 def _build(
     cmd: Command, aliases: set[str], *, priority: int = 1, block: bool = False
 ) -> type[AlconnaMatcher]:
+    if _config.tsugu_command_prefixes:
+        orig_name = cmd.buffer.get("command", "")
+        if isinstance(orig_name, str) and orig_name:
+            custom_prefixes = list(_config.tsugu_command_prefixes)
+            
+            # Re-write the main command
+            cmd.buffer["command"] = f"{custom_prefixes[0]}{orig_name}"
+            
+            # Re-write the aliases
+            new_aliases = set()
+            for p in custom_prefixes:
+                if p != custom_prefixes[0]:
+                    new_aliases.add(f"{p}{orig_name}")
+                for a in aliases:
+                    if a.startswith(p):
+                        new_aliases.add(a)
+                    else:
+                        new_aliases.add(f"{p}{a}")
+                    # Allow the exact original command name to trigger without prefix 
+                    # if the user explicitly added it to their aliases
+                    if a == orig_name:
+                        new_aliases.add(a)
+            aliases = new_aliases
+            
+            # Re-write shortcuts
+            new_shortcuts = []
+            for s in cmd.shortcuts:
+                key, target, wrapper = s
+                if "command" in target and isinstance(target["command"], str):
+                    target["command"] = target["command"].replace(
+                        orig_name, f"{custom_prefixes[0]}{orig_name}", 1
+                    )
+                new_shortcuts.append((key, target, wrapper))
+            cmd.shortcuts = new_shortcuts
+
     _matcher = cmd.build(
         skip_for_unmatch=False,
         auto_send_output=False,
