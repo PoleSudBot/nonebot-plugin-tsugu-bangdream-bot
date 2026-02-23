@@ -74,38 +74,40 @@ _config = get_plugin_config(Config)
 _command_start = get_driver().config.command_start
 
 
+_prefix = _config.tsugu_command_prefixes[0] if _config.tsugu_command_prefixes else "b"
+
 __plugin_meta__ = PluginMetadata(
     name="BangDream",
     description="🌸 BanG Dream! 少女乐团派对！相关信息查询与玩家管理插件",
-    usage="""
+    usage=f"""
 ## 🎨 卡牌查询
 
-- **b查卡 [关键词/ID]** - 搜索卡牌信息
-  示例：`b查卡 友希那`
-- **b查卡面 / bcard [卡牌ID]** - 获取高清卡面插画
-  示例：`b查卡面 1399`
+- **{_prefix}查卡 [关键词/ID]** - 搜索卡牌信息
+  示例：`{_prefix}查卡 友希那`
+- **{_prefix}查卡面 / {_prefix}card [卡牌ID]** - 获取高清卡面插画
+  示例：`{_prefix}查卡面 1399`
 
 ## 🎵 歌曲与谱面
 
-- **b查曲 / bsong [关键词]** - 搜索歌曲详情/ID
-  示例：`b查曲 仅仅是现存`
-- **b查谱面 [歌曲ID] [难度]** - 预览谱面 (难度可选，默认expert)
-  示例：`b查谱面 1 cn`
-  示例：`b查谱面 1 hard`
+- **{_prefix}查曲 / {_prefix}song [关键词]** - 搜索歌曲详情/ID
+  示例：`{_prefix}查曲 仅仅是现存`
+- **{_prefix}查谱面 [歌曲ID] [难度]** - 预览谱面 (难度可选，默认expert)
+  示例：`{_prefix}查谱面 1 cn`
+  示例：`{_prefix}查谱面 1 hard`
 
 ## 📊 活动与预测线 (YCX)
 
-- **b查活动 / bevent [关键词/ID]** - 查询活动详情
-- **bycx [排名] [活动ID]** - 查询指定档位预测线
-  示例：`bycx 1000`
-- **bycxall** / **bmyycx** - 查询所有档位预测线
+- **{_prefix}查活动 / {_prefix}event [关键词/ID]** - 查询活动详情
+- **{_prefix}ycx [排名] [活动ID]** - 查询指定档位预测线
+  示例：`{_prefix}ycx 1000`
+- **{_prefix}ycxall** / **{_prefix}myycx** - 查询所有档位预测线
 
 ## 🎮 玩家管理
 
-- **b玩家状态** - 生成个人信息卡片
-- **b绑定玩家** - 开启账号绑定流程 (需修改签名验证)
+- **{_prefix}玩家状态** - 生成个人信息卡片
+- **{_prefix}绑定玩家** - 开启账号绑定流程 (需修改签名验证)
 
-> 💡 提示：发送 `bh` 获取完整指令列表
+> 💡 提示：发送 `{_prefix}h` 获取完整指令列表
 """.strip(),
     type="application",
     homepage="https://github.com/WindowsSov8forUs/nonebot-plugin-tsugu-bangdream-bot",
@@ -280,32 +282,43 @@ def _build(
             # Re-write the main command
             cmd.buffer["command"] = f"{custom_prefixes[0]}{orig_name}"
             
-            # Re-write the aliases
-            new_aliases = set()
+            # Re-write the aliases (User-configured aliases are passed verbatim)
+            new_aliases = set(aliases)
             for p in custom_prefixes:
                 if p != custom_prefixes[0]:
                     new_aliases.add(f"{p}{orig_name}")
-                for a in aliases:
-                    if a.startswith(p):
-                        new_aliases.add(a)
-                    else:
-                        new_aliases.add(f"{p}{a}")
-                    # Allow the exact original command name to trigger without prefix 
-                    # if the user explicitly added it to their aliases
-                    if a == orig_name:
-                        new_aliases.add(a)
             aliases = new_aliases
             
             # Re-write shortcuts
             new_shortcuts = []
             for s in cmd.shortcuts:
                 key, target, wrapper = s
+                
+                # Normal shortcuts
                 if "command" in target and isinstance(target["command"], str):
                     target["command"] = target["command"].replace(
                         orig_name, f"{custom_prefixes[0]}{orig_name}", 1
                     )
-                new_shortcuts.append((key, target, wrapper))
+                    new_key = key
+                
+                # Alias shortcuts ({"prefix": True})
+                elif target.get("prefix") is True:
+                    has_prefix = any(key.startswith(p) for p in custom_prefixes)
+                    if not has_prefix:
+                        new_key = f"{custom_prefixes[0]}{key}"
+                    else:
+                        new_key = key
+                else:
+                    new_key = key
+                    
+                new_shortcuts.append((new_key, target, wrapper))
             cmd.shortcuts = new_shortcuts
+
+            # Patch help descriptions to use the new prefix if possible
+            if cmd.meta.usage:
+                cmd.meta.usage = cmd.meta.usage.replace(orig_name, f"{custom_prefixes[0]}{orig_name}")
+            if cmd.meta.example:
+                cmd.meta.example = cmd.meta.example.replace(orig_name, f"{custom_prefixes[0]}{orig_name}")
 
     _matcher = cmd.build(
         skip_for_unmatch=False,
