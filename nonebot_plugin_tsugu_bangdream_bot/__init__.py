@@ -78,36 +78,74 @@ _prefix = _config.tsugu_command_prefixes[0] if _config.tsugu_command_prefixes el
 
 __plugin_meta__ = PluginMetadata(
     name="BangDream",
-    description="🌸 BanG Dream! 少女乐团派对！相关信息查询与玩家管理插件",
+    description=(
+        "由 Tsugu 提供的 BanG Dream! 少女乐团派对！查询功能，"
+        "支持卡牌、歌曲、活动、榜线、玩家管理等常用查询。"
+    ),
     usage=f"""
-## 🎨 卡牌查询
+> **📌 快速入口**
+>
+> - **单条命令帮助**：`bh {_prefix}查卡` / `bhelp {_prefix}查卡` / `banghelp {_prefix}查卡`
+> - **支持服务器**：`jp` 日服、`en` 国际服、`tw` 台服、`cn` 国服、`kr` 韩服
+>
+> 💡 *提示：多数查询会优先使用你的主服务器或默认显示服务器；可先通过 `{_prefix}主服务器 cn` 与 `{_prefix}设置默认服务器 国服 日服` 调整。*
 
-- **{_prefix}查卡 [关键词/ID]** - 搜索卡牌信息
-  示例：`{_prefix}查卡 友希那`
-- **{_prefix}查卡面 / {_prefix}card [卡牌ID]** - 获取高清卡面插画
-  示例：`{_prefix}查卡面 1399`
+---
 
-## 🎵 歌曲与谱面
+## 常用查询
 
-- **{_prefix}查曲 / {_prefix}song [关键词]** - 搜索歌曲详情/ID
-  示例：`{_prefix}查曲 仅仅是现存`
-- **{_prefix}查谱面 [歌曲ID] [难度]** - 预览谱面 (难度可选，默认expert)
-  示例：`{_prefix}查谱面 1 cn`
-  示例：`{_prefix}查谱面 1 hard`
+| 指令 | 功能 |
+| :--- | :--- |
+| `{_prefix}查卡 <word>` `{_prefix}查卡牌 <word>` | 根据关键词、属性、角色或卡牌 ID 查询卡牌信息，例如 `{_prefix}查卡 绿 tsugu`。 |
+| `{_prefix}查卡面 <card_id>` `{_prefix}查卡插画 <card_id>` `{_prefix}查插画 <card_id>` | 查询指定卡牌的插画。 |
+| `{_prefix}ycx <tier> [event_id] [server_name]` | 查询指定档位的当前活动预测线，例如 `{_prefix}ycx 1000`。 |
+| `{_prefix}ycxall [event_id] [server_name]` `{_prefix}myycx [event_id] [server_name]` | 查询所有档位预测线。 |
+| `{_prefix}lsycx <tier> [event_id] [server_name]` | 查询与最近同类型活动相关的历史预测线。 |
+| `{_prefix}查活动 <word>` | 根据关键词或活动 ID 查询活动信息。 |
+| `{_prefix}查曲 <word>` | 根据关键词、曲目 ID、乐队或等级查询曲目信息。 |
+| `{_prefix}查谱面 <song_id> [difficulty]` | 查询指定曲目与难度的谱面信息；省略难度时默认 `expert`。 |
+| `{_prefix}随机曲 <word>` `{_prefix}随机 <word>` | 按关键词或条件随机返回曲目，例如 `{_prefix}随机曲 lv24 ag`。 |
 
-## 📊 活动与预测线 (YCX)
+> **💡 查询参数示例**
+>
+> - **服务器**：`jp` `en` `tw` `cn` `kr`，或 `日服` `国际服` `台服` `国服` `韩服`
+> - **曲目/卡牌/活动查询**：可输入 ID、关键词、属性、角色名、乐队名或等级条件，多个参数用空格分隔
+> - **谱面难度**：可输入 `easy` `normal` `hard` `expert` `special`
 
-- **{_prefix}查活动 / {_prefix}event [关键词/ID]** - 查询活动详情
-- **{_prefix}ycx [排名] [活动ID]** - 查询指定档位预测线
-  示例：`{_prefix}ycx 1000`
-- **{_prefix}ycxall** / **{_prefix}myycx** - 查询所有档位预测线
+## 玩家与服务器
 
-## 🎮 玩家管理
+| 指令 | 功能 |
+| :--- | :--- |
+| `{_prefix}玩家状态 [index] [server_name]` `{_prefix}<服务器>玩家状态` | 查询自己的玩家状态；可指定绑定序号或服务器。 |
+| `{_prefix}查玩家 <player_id> [server_name]` `{_prefix}查询玩家 <player_id> [server_name]` | 查询指定 ID 玩家信息；省略服务器时使用当前主服务器。 |
+| `{_prefix}绑定玩家 [server_name]` | 绑定玩家信息。不要在指令后直接填写玩家 ID，按提示修改签名或乐队编队名称后再回复玩家 ID。 |
+| `{_prefix}解除绑定 [server_name]` `{_prefix}解绑玩家 [server_name]` | 解除指定服务器的玩家绑定；省略服务器时使用当前主服务器。 |
+| `{_prefix}玩家状态列表` `{_prefix}玩家列表` `{_prefix}玩家信息列表` | 查看当前账号已绑定的所有玩家信息。 |
+| `{_prefix}玩家默认ID <index>` `{_prefix}默认玩家ID <index>` `{_prefix}默认玩家 <index>` `{_prefix}玩家ID <index>` | 设置玩家状态与车牌发送时默认使用的玩家绑定序号。 |
+| `{_prefix}主服务器 <server_name>` `{_prefix}服务器模式 <server_name>` `{_prefix}切换服务器 <server_name>` | 设置当前主服务器，例如 `{_prefix}主服务器 cn`。 |
+| `{_prefix}<服务器>模式` | 快捷切换主服务器，例如 `{_prefix}日服模式`。 |
+| `{_prefix}设置显示服务器 <server_list>` `{_prefix}默认服务器 <server_list>` `{_prefix}设置默认服务器 <server_list>` | 设置卡牌、角色、活动、歌曲等信息查询时的服务器显示顺序，例如 `{_prefix}设置默认服务器 国服 日服`。 |
 
-- **{_prefix}玩家状态** - 生成个人信息卡片
-- **{_prefix}绑定玩家** - 开启账号绑定流程 (需修改签名验证)
+## 更多查询与抽卡
 
-> 💡 提示：发送 `{_prefix}h` 获取完整指令列表
+| 指令 | 功能 |
+| :--- | :--- |
+| `{_prefix}查角色 <word>` | 根据关键词或角色 ID 查询角色信息。 |
+| `{_prefix}查询分数表 <server_name>` `{_prefix}查分数表 <server_name>` `{_prefix}查询分数榜 <server_name>` `{_prefix}查分数榜 <server_name>` | 查询指定服务器歌曲分数表；省略时使用当前主服务器。 |
+| `{_prefix}查试炼 [event_id]` `{_prefix}查stage [event_id]` `{_prefix}查舞台 [event_id]` `{_prefix}查festival [event_id]` `{_prefix}查5v5 [event_id]` | 查询当前或指定活动的试炼信息；追加 `-m` 可显示歌曲 meta。 |
+| `{_prefix}查卡池 <gacha_id>` | 查询指定卡池信息。 |
+| `{_prefix}抽卡模拟 [times] [gacha_id]` | 模拟抽卡；省略卡池 ID 时使用当前活动卡池，例如 `{_prefix}抽卡模拟 300 922`。 |
+
+## 车牌功能
+
+| 指令 | 功能 |
+| :--- | :--- |
+| `{_prefix}ycm [keyword]` `{_prefix}有车吗 [keyword]` `{_prefix}车来 [keyword]` | 查询当前车牌列表，可用关键词过滤，例如 `{_prefix}ycm 大分`。 |
+| `{_prefix}开启车牌转发` | 开启房间号自动转发。 |
+| `{_prefix}关闭车牌转发` | 关闭房间号自动转发。 |
+
+> **⚠️ 注意**
+> 房间号自动转发依赖用户先开启车牌转发；插件会根据消息中的房间号与车牌关键词尝试提交。
 """.strip(),
     type="application",
     homepage="https://github.com/WindowsSov8forUs/nonebot-plugin-tsugu-bangdream-bot",
@@ -1005,14 +1043,15 @@ with namespace("tsugu") as tsugu_namespace:
         )
 
 
-# help 的内部实现，避免对其他 help 产生阻塞
+# bh/bhelp/banghelp 的内部实现，避免与本体 help 插件冲突
 @(
     _help := on_alconna(
         Alconna(
-            "help",
+            "bh",
             Args["query#输入命令名称查看帮助;/?", str, Field("-1")],
             meta=CommandMeta(description="显示命令帮助"),
         ),
+        aliases={"bhelp", "banghelp"},
         use_cmd_start=True,
         auto_send_output=True,
     )
